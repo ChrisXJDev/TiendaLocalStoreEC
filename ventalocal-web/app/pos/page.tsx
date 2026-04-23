@@ -3,7 +3,7 @@ import { useState } from 'react';
 import {
   Search, Plus, Minus, CreditCard, Banknote, Smartphone,
   ReceiptText, X, ChevronRight, Clock, DollarSign, ShoppingBag,
-  User, Lock, Unlock, AlertCircle, ArrowLeft
+  User, Lock, Unlock, AlertCircle, ArrowLeft, BarChart3
 } from 'lucide-react';
 import Link from 'next/link';
 import { MOCK_TURNO } from '@/lib/mock-data'; // Usaremos esto solo como reserva si no hay turno abierto
@@ -135,37 +135,30 @@ export default function PosPage() {
 
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh' }} className="flex flex-col">
-      {/* Header */}
-      <header className="glass px-5 py-3 flex items-center justify-between border-b" style={{ borderColor: 'var(--border)' }}>
-        <div className="flex items-center gap-3">
-          {/* Back */}
+      <header className="glass px-4 sm:px-6 py-3 flex items-center justify-between border-b sticky top-0 z-50" style={{ borderColor: 'var(--border)' }}>
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link href="/" className="flex items-center gap-1.5 text-sm text-[var(--text-secondary)] hover:text-white transition-colors group"
             style={{ textDecoration: 'none' }}>
-            <span className="w-7 h-7 rounded-lg flex items-center justify-center group-hover:bg-[var(--bg-elevated)] transition-all"
+            <span className="w-8 h-8 rounded-lg flex items-center justify-center group-hover:bg-[var(--bg-elevated)] transition-all"
               style={{ border: '1px solid var(--border)' }}>
-              <ArrowLeft size={14} />
+              <ArrowLeft size={16} />
             </span>
-            <span className="hidden sm:inline text-xs">Inicio</span>
+            <span className="hidden md:inline text-xs">Inicio</span>
           </Link>
-          <div className="w-px h-5" style={{ background: 'var(--border)' }} />
-          <Link href="/" className="btn-ghost" style={{ padding: '0.4rem 0.6rem' }}>
-            <ShoppingBag size={16} />
-          </Link>
-          <span className="font-bold text-white">POS Terminal</span>
-          <div className="badge badge-green ml-2">
-            <span className="dot-live" style={{ width: 6, height: 6 }} /> Turno activo
+          <div className="hidden sm:block w-px h-5 mx-1" style={{ background: 'var(--border)' }} />
+          <span className="font-bold text-white text-sm sm:text-base whitespace-nowrap">POS Terminal</span>
+          <div className="hidden xs:flex badge badge-green ml-1 sm:ml-2 scale-90 sm:scale-100">
+             <span className="dot-live" style={{ width: 6, height: 6 }} /> <span className="hidden sm:inline">Turno activo</span>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-            <User size={14} /> {turno.vendedor_nombre}
-          </div>
-          <Link href="/dashboard" className="btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
-            Panel Admin (Dashboard)
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Link href="/dashboard" className="w-9 h-9 sm:w-auto sm:btn-secondary flex items-center justify-center rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)] text-white sm:px-4 sm:py-2" title="Ir al Dashboard">
+            <BarChart3 size={16} className="sm:mr-2" />
+            <span className="hidden sm:inline text-xs">Dashboard</span>
           </Link>
-          <button id="btn-cerrar-turno" onClick={() => alert("Simulando cierre de sesión. En el sistema real aquí se imprimiría el corte de caja (Z).")}
-            className="btn-ghost" style={{ color: 'var(--amber)', fontSize: '0.8rem' }}>
-            <Lock size={13} /> Bloquear Caja
+          <button id="btn-cerrar-turno" onClick={() => alert("Simulando bloqueo.")}
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-500">
+            <Lock size={15} />
           </button>
         </div>
       </header>
@@ -178,7 +171,7 @@ export default function PosPage() {
             <input id="pos-search" value={busqueda} onChange={e => setBusqueda(e.target.value)}
               placeholder="Buscar producto..." className="input pl-9" />
           </div>
-          <div className="grid gap-5 overflow-y-auto flex-1 pb-10" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+          <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-5 overflow-y-auto flex-1 pb-20 lg:pb-10">
             {productosFiltrados.map(p => {
               const count = items.find(i => i.producto.id === p.id)?.cantidad || 0;
               return (
@@ -208,10 +201,20 @@ export default function PosPage() {
         </div>
 
         {/* ── Mobile Cart Trigger (FAB) ──────────────── */}
-        <div className="lg:hidden fixed bottom-0 left-0 w-full bg-[var(--bg-elevated)] border-t border-[var(--border)] p-4 z-40 pb-safe shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
-           <button onClick={() => setShowMobileCart(true)} className="w-full btn-primary text-base py-3 flex items-center justify-between px-6 shadow-lg shadow-orange-500/20">
-              <span className="flex items-center gap-2 font-bold"><ShoppingBag size={18}/> Ver Orden ({items.reduce((s,i) => s + i.cantidad, 0)})</span>
-              <span className="font-black">${total.toFixed(2)}</span>
+        <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] z-40">
+           <button 
+             onClick={() => setShowMobileCart(true)} 
+             className="w-full h-14 bg-orange-500 rounded-2xl text-white shadow-[0_10px_30px_rgba(249,115,22,0.4)] flex items-center justify-between px-6 transition-transform active:scale-95">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <ShoppingBag size={22} />
+                  <span className="absolute -top-2 -right-2 w-5 h-5 bg-white text-orange-600 rounded-full text-[10px] font-black flex items-center justify-center border-2 border-orange-500">
+                    {items.reduce((s,i) => s + i.cantidad, 0)}
+                  </span>
+                </div>
+                <span className="font-black tracking-tight text-lg">Revisar Orden</span>
+              </div>
+              <span className="font-black text-xl">${total.toFixed(2)}</span>
            </button>
         </div>
 
