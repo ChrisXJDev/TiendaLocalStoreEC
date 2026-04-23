@@ -111,7 +111,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={{ background: 'var(--bg-base)', minHeight: '100dvh' }} className="flex relative pb-16 md:pb-0">
+    <div style={{ background: 'var(--bg-base)', minHeight: '100dvh' }} className="flex relative pb-20 md:pb-0 overflow-hidden">
       {/* Sidebar (Desktop) */}
       <aside className="sidebar hidden md:flex md:flex-col flex-shrink-0">
         <div className="flex items-center gap-2 mb-8">
@@ -158,7 +158,7 @@ export default function DashboardPage() {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-10">
+      <main className="flex-1 overflow-y-auto p-4 md:p-10 pb-24 md:pb-10">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
           <div>
@@ -176,35 +176,33 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Metrics - 2 columns on mobile for better space usage */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">
           {METRICS.map(({ label, value, icon: Icon, color, sub }) => (
-            <div key={label} className="metric-card p-6 rounded-xl group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity" style={{ background: color }}></div>
-              <div className="flex items-center justify-between mb-4 relative z-10">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+            <div key={label} className="metric-card p-4 md:p-6 rounded-2xl group relative overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-3xl opacity-10" style={{ background: color }}></div>
+              <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center"
                   style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
-                  <Icon size={18} style={{ color }} />
+                  <Icon size={14} className="md:w-[18px] md:h-[18px]" style={{ color }} />
                 </div>
-                <ArrowUpRight size={16} className="text-[var(--text-muted)] opacity-30 group-hover:opacity-100 group-hover:text-white transition-all" />
               </div>
-              <div className="text-3xl font-black text-white relative z-10 tracking-tight">{value}</div>
-              <div className="text-sm font-medium text-[var(--text-secondary)] mt-1 relative z-10">{label}</div>
-              <div className="text-xs text-[var(--text-muted)] mt-1.5 relative z-10">{sub}</div>
+              <div className="text-xl md:text-3xl font-black text-white relative z-10 tracking-tight">{value}</div>
+              <div className="text-[10px] md:text-sm font-medium text-[var(--text-secondary)] mt-0.5 relative z-10 uppercase tracking-wide">{label}</div>
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
           {/* Órdenes recientes */}
-          <div className="card lg:col-span-3 rounded-xl flex flex-col p-6 bg-[var(--bg-surface)]">
-            <div className="flex items-center justify-between mb-6">
+          <div className="card lg:col-span-3 rounded-2xl flex flex-col p-4 md:p-6 bg-[var(--bg-surface)]">
+            <div className="flex items-center justify-between mb-4 md:mb-6">
               <div className="flex items-center gap-2">
-                <ShoppingCart size={20} className="text-orange-500" />
-                <h2 className="font-bold text-lg">Órdenes recientes</h2>
+                <ShoppingCart size={18} className="text-orange-500" />
+                <h2 className="font-bold text-base md:text-lg">Órdenes recientes</h2>
               </div>
-              <Link href="/pos" className="text-xs text-orange-400 hover:text-orange-300 flex items-center gap-1">
-                Ver POS <ChevronRight size={12} />
+              <Link href="/pos" className="text-[10px] md:text-xs text-orange-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                Ver POS <ChevronRight size={10} />
               </Link>
             </div>
             
@@ -224,8 +222,8 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 {/* Mobile View */}
-                <div className="md:hidden flex flex-col gap-3">
-                  {ordenes.map(orden => (
+                <div className="md:hidden flex flex-col gap-2">
+                  {ordenes.slice(0, 5).map(orden => (
                     <OrdenCard key={orden.id} orden={orden} onUpdate={updateEstado} />
                   ))}
                 </div>
@@ -233,23 +231,22 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="card lg:col-span-1 p-6 rounded-xl flex flex-col">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="font-bold">Stock bajo</h2>
-              <Link href="/dashboard/inventario" className="text-xs text-orange-400 hover:text-violet-300 flex items-center gap-1">
-                Gestionar <ChevronRight size={12} />
+          <div className="card lg:col-span-1 p-4 md:p-6 rounded-2xl flex flex-col">
+            <div className="flex items-center justify-between mb-4 md:mb-5">
+              <h2 className="font-bold text-base">Stock bajo</h2>
+              <Link href="/dashboard/inventario" className="text-[10px] text-orange-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                Ver todo <ChevronRight size={10} />
               </Link>
             </div>
-            <div className="flex flex-col gap-3">
-              {stockBajo.map(p => (
-                <div key={p.id} className="flex items-center gap-3 p-3 rounded-xl"
-                  style={{ background: 'var(--bg-elevated)' }}>
-                  <img src={p.imagen_url} alt={p.nombre} className="w-11 h-11 rounded bg-black/20 object-cover flex-shrink-0" />
+            <div className="flex flex-col gap-2 md:gap-3">
+              {stockBajo.slice(0, 4).map(p => (
+                <div key={p.id} className="flex items-center gap-3 p-2 md:p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)]">
+                  <img src={p.imagen_url} alt={p.nombre} className="w-9 h-9 md:w-11 md:h-11 rounded-lg bg-black/20 object-cover flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold truncate">{p.nombre}</p>
-                    <p className="text-xs text-[var(--text-muted)]">${Number(p.precio).toFixed(2)}</p>
+                    <p className="text-[11px] md:text-xs font-bold truncate text-white">{p.nombre}</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">${Number(p.precio).toFixed(2)}</p>
                   </div>
-                  <span className={`badge ${p.stock === 0 ? 'badge-red' : 'badge-amber'}`}>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-black ${p.stock === 0 ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>
                     {p.stock}
                   </span>
                 </div>
