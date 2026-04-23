@@ -236,6 +236,12 @@ p {
   flex-shrink: 0;
 }
 
+@media (max-width: 767px) {
+  .sidebar {
+    display: none !important;
+  }
+}
+
 .sidebar-link {
   display: flex;
   align-items: center;
