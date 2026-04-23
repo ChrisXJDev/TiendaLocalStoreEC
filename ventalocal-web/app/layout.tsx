@@ -4,6 +4,10 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'VentaLocal — Vende más, gestiona fácil',
   description: 'Plataforma SaaS para negocios locales. Catálogo online, POS y gestión de inventario en un solo lugar.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
