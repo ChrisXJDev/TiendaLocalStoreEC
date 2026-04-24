@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import * as stylex from '@stylexjs/stylex';
+import { tokens } from '../../tokens.stylex';
 import {
   Package, Plus, Pencil, Check, X, Search, BarChart3, Globe,
   Zap, ShoppingBag, TrendingDown, AlertCircle, ArrowLeft, Trash2, Image as ImageIcon
@@ -8,23 +10,119 @@ import {
 import { Producto } from '@/lib/types';
 import { getProductos, updateProducto, createProducto, deleteProducto } from '@/lib/api';
 
-const NEGOCIO_ID = '22222222-2222-2222-2222-222222222222'; // Hardcoded para el Demo
+const s = stylex.create({
+  layout: {
+    display: 'flex',
+    minHeight: '100vh',
+    backgroundColor: tokens.bgMain,
+    color: tokens.textMain,
+  },
+  sidebar: {
+    width: '320px',
+    backgroundColor: tokens.bgSurface,
+    borderRight: `1px solid ${tokens.border}`,
+    padding: '4rem 2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'sticky',
+    top: 0,
+    height: '100vh',
+  },
+  main: {
+    flex: 1,
+    padding: tokens.spaceL,
+    maxWidth: '1800px',
+    margin: '0 auto',
+    width: '100%',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginBottom: tokens.spaceL,
+  },
+  title: {
+    fontSize: '4rem',
+    fontWeight: 900,
+    letterSpacing: '-3px',
+    marginBottom: '1rem',
+  },
+  summaryGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: tokens.spaceM,
+    marginBottom: tokens.spaceL,
+  },
+  metricCard: {
+    padding: '2.5rem',
+    backgroundColor: tokens.bgSurface,
+    borderRadius: '2.5rem',
+    border: `1px solid ${tokens.border}`,
+  },
+  tableCard: {
+    backgroundColor: tokens.bgSurface,
+    borderRadius: tokens.radiusCard,
+    border: `1px solid ${tokens.border}`,
+    overflow: 'hidden',
+    padding: tokens.spaceM,
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+  },
+  th: {
+    textAlign: 'left',
+    padding: '1.5rem',
+    color: tokens.textMuted,
+    fontSize: '0.7rem',
+    fontWeight: 900,
+    textTransform: 'uppercase',
+    letterSpacing: '0.2em',
+    borderBottom: `1px solid ${tokens.border}`,
+  },
+  td: {
+    padding: '2rem 1.5rem',
+    borderBottom: `1px solid ${tokens.border}`,
+  },
+  navLink: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1.5rem',
+    padding: '1.5rem',
+    color: tokens.textDim,
+    textDecoration: 'none',
+    fontWeight: 600,
+    borderRadius: '2rem',
+    transition: 'all 0.3s',
+  },
+  activeLink: {
+    backgroundColor: 'rgba(255, 90, 31, 0.1)',
+    color: tokens.accent,
+  },
+  btnPrimary: {
+    padding: '1.5rem 3rem',
+    borderRadius: '2rem',
+    backgroundColor: tokens.accent,
+    color: 'white',
+    fontWeight: 900,
+    fontSize: '0.8rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.1em',
+    border: 'none',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '1rem',
+    textDecoration: 'none',
+  }
+});
+
+const NEGOCIO_ID = '22222222-2222-2222-2222-222222222222';
 
 export default function InventarioPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  // UI State
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editData, setEditData] = useState<Partial<Producto>>({});
   const [busqueda, setBusqueda] = useState('');
-  
-  // Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newProd, setNewProd] = useState<Partial<Producto>>({
-    nombre: '', descripcion: '', precio: 0, stock: 1, categoria: '', imagen_url: '', activo: true
-  });
-  const [savingEntity, setSavingEntity] = useState(false);
 
   useEffect(() => {
     cargarInventario();
@@ -37,320 +135,105 @@ export default function InventarioPage() {
     setLoading(false);
   };
 
-  const filtrados = productos.filter(p =>
-    p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    (p.categoria || '').toLowerCase().includes(busqueda.toLowerCase())
-  );
+  const filtrados = productos.filter(p => p.nombre.toLowerCase().includes(busqueda.toLowerCase()));
 
-  // ─── UPDATE (Editar Inline) ───
-  const startEdit = (p: Producto) => {
-    setEditingId(p.id);
-    setEditData({ precio: p.precio, stock: p.stock });
-  };
-
-  const saveEditInline = async (id: string) => {
-    try {
-      await updateProducto(id, editData);
-      setProductos(prev => prev.map(p => p.id === id ? { ...p, ...editData } : p));
-      setEditingId(null);
-      setEditData({});
-    } catch(err) {
-      alert("Error al actualizar");
-    }
-  };
-
-  const cancelEdit = () => { setEditingId(null); setEditData({}); };
-
-  const toggleActivo = async (p: Producto) => {
-    try {
-      await updateProducto(p.id, { activo: !p.activo });
-      setProductos(prev => prev.map(prod => prod.id === p.id ? { ...prod, activo: !p.activo } : prod));
-    } catch(err) {
-      alert("Error al cambiar estado");
-    }
-  };
-
-  // ─── DELETE (Eliminar) ───
-  const handleDelete = async (id: string) => {
-    if(!confirm("¿Estás seguro de eliminar este producto definitivamente?")) return;
-    try {
-      await deleteProducto(id);
-      setProductos(prev => prev.filter(p => p.id !== id));
-    } catch(err) {
-      alert("Error al eliminar (puede tener órdenes asociadas)");
-    }
-  };
-
-  // ─── CREATE (Nuevo Producto) ───
-  const handleCreate = async () => {
-    if (!newProd.nombre || !newProd.precio) return alert("Nombre y Precio son requeridos");
-    setSavingEntity(true);
-    try {
-      const dataToInsert = { ...newProd, negocio_id: NEGOCIO_ID };
-      const creado = await createProducto(dataToInsert);
-      setProductos(prev => [creado, ...prev]);
-      setIsModalOpen(false);
-      setNewProd({ nombre: '', descripcion: '', precio: 0, stock: 1, categoria: '', imagen_url: '', activo: true });
-    } catch(err) {
-      alert("Error al crear el producto");
-    }
-    setSavingEntity(false);
-  };
-
-  // Stats
-  const totalStock = productos.reduce((s, p) => s + p.stock, 0);
-  const valorInventario = productos.reduce((s, p) => s + p.stock * p.precio, 0);
-  const stockBajoCount = productos.filter(p => p.stock <= 5).length;
+  if (loading) return <div {...stylex.props(s.layout)} style={{justifyContent:'center', alignItems:'center'}}>StyleX Inventory Engine...</div>;
 
   return (
-    <div style={{ background: 'var(--bg-base)', minHeight: '100dvh' }} className="flex relative pb-16 md:pb-0">
-      {/* Sidebar (Desktop) */}
-      <aside className="sidebar hidden md:flex md:flex-col flex-shrink-0">
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center">
-            <ShoppingBag size={15} className="text-white" />
+    <div {...stylex.props(s.layout)}>
+      <aside {...stylex.props(s.sidebar)}>
+        <div style={{display:'flex', alignItems:'center', gap:'1rem', marginBottom:'4rem'}}>
+          <div style={{backgroundColor: tokens.accent, padding:'0.5rem', borderRadius:'0.75rem'}}>
+             <ShoppingBag size={20} color="white" />
           </div>
-          <span className="font-bold text-white">VentaLocal</span>
+          <span style={{fontWeight:900, fontSize:'1.25rem', letterSpacing:'-1px'}}>VENTALOCAL</span>
         </div>
-        <nav className="flex flex-col gap-1">
-          <Link href="/" className="sidebar-link flex items-center gap-3"><ArrowLeft size={15} /> Volver a inicio</Link>
-          <div className="my-2" style={{ height: 1, background: 'var(--border)' }} />
-          <Link href="/dashboard" className="sidebar-link flex items-center gap-3"><BarChart3 size={16} /> Dashboard</Link>
-          <Link href="/dashboard/inventario" className="sidebar-link active flex items-center gap-3"><Package size={16} /> Inventario</Link>
-          <Link href="/pos" className="sidebar-link flex items-center gap-3"><Zap size={16} /> POS</Link>
-          <Link href="/tienda/eleganza" className="sidebar-link flex items-center gap-3"><Globe size={16} /> Ver catálogo</Link>
+
+        <nav style={{display:'flex', flexDirection:'column', gap:'0.5rem'}}>
+          <Link href="/dashboard" {...stylex.props(s.navLink)}><BarChart3 size={20}/> Dashboard</Link>
+          <Link href="/dashboard/inventario" {...stylex.props(s.navLink, s.activeLink)}><Package size={20}/> Inventario</Link>
+          <Link href="/pos" {...stylex.props(s.navLink)}><Zap size={20}/> Terminal POS</Link>
+          <Link href="/tienda/eleganza" {...stylex.props(s.navLink)}><Globe size={20}/> Catálogo</Link>
         </nav>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-10">
-        <div className="flex items-center justify-between mb-8">
+      <main {...stylex.props(s.main)}>
+        <header {...stylex.props(s.header)}>
           <div>
-            <h1 className="text-2xl font-black" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>Inventario</h1>
-            <p className="text-[var(--text-secondary)] text-sm mt-1">Conectado a la Base de Datos</p>
+            <h1 {...stylex.props(s.title)}>Inventario</h1>
+            <p style={{fontSize:'1.25rem', color:tokens.textDim, fontWeight:500}}>Gestión centralizada de stock</p>
           </div>
-          <button id="btn-nuevo-producto" onClick={() => setIsModalOpen(true)} className="btn-primary flex items-center gap-2 shadow-lg shadow-orange-500/20">
-            <Plus size={16} /> Nuevo producto
+          <button {...stylex.props(s.btnPrimary)}>
+            <Plus size={18} /> Nuevo Producto
           </button>
-        </div>
+        </header>
 
-        {/* Summary cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {[
-            { label: 'Unidades totales', value: loading ? '...' : totalStock.toString(), color: '#7c3aed', icon: Package },
-            { label: 'Valor del inventario', value: loading ? '...' : `$${valorInventario.toFixed(2)}`, color: '#10b981', icon: TrendingDown },
-            { label: 'Stock crítico (≤5)', value: loading ? '...' : stockBajoCount.toString(), color: '#f59e0b', icon: AlertCircle },
-          ].map(({ label, value, color, icon: Icon }) => (
-            <div key={label} className="metric-card">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2"
-                style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
-                <Icon size={14} style={{ color }} />
-              </div>
-              <div className="text-xl font-black">{value}</div>
-              <div className="text-xs text-[var(--text-secondary)]">{label}</div>
-            </div>
-          ))}
-        </div>
+        <section {...stylex.props(s.summaryGrid)}>
+           <div {...stylex.props(s.metricCard)}>
+              <p style={{fontSize:'0.75rem', fontWeight:900, color:tokens.textMuted, textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:'1rem'}}>Unidades Totales</p>
+              <p style={{fontSize:'3rem', fontWeight:900, letterSpacing:'-2px'}}>{productos.reduce((s,p)=>s+p.stock, 0)}</p>
+           </div>
+           <div {...stylex.props(s.metricCard)}>
+              <p style={{fontSize:'0.75rem', fontWeight:900, color:tokens.textMuted, textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:'1rem'}}>Valor Almacén</p>
+              <p style={{fontSize:'3rem', fontWeight:900, letterSpacing:'-2px'}}>${productos.reduce((s,p)=>s+(p.stock*p.precio), 0).toFixed(2)}</p>
+           </div>
+           <div {...stylex.props(s.metricCard)}>
+              <p style={{fontSize:'0.75rem', fontWeight:900, color:tokens.textMuted, textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:'1rem'}}>Alertas Críticas</p>
+              <p style={{fontSize:'3rem', fontWeight:900, letterSpacing:'-2px', color:tokens.accent}}>{productos.filter(p=>p.stock<=5).length}</p>
+           </div>
+        </section>
 
-        {/* Search */}
-        <div className="relative mb-5 flex gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-            <input id="inv-search" value={busqueda} onChange={e => setBusqueda(e.target.value)}
-              placeholder="Buscar por nombre o categoría..." className="input pl-9 w-full" />
+        <section {...stylex.props(s.tableCard)}>
+          <div style={{padding:'2rem', borderBottom:`1px solid ${tokens.border}`, display:'flex', gap:'2rem', alignItems:'center'}}>
+             <Search size={20} color={tokens.textMuted} />
+             <input 
+               placeholder="Buscar en el almacén..." 
+               style={{flex:1, background:'none', border:'none', color:'white', fontSize:'1.5rem', fontWeight:600, outline:'none'}}
+               value={busqueda}
+               onChange={e => setBusqueda(e.target.value)}
+             />
           </div>
-        </div>
-
-        {/* Table */}
-        <div className="card overflow-hidden" style={{ padding: 0 }}>
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-sm min-w-[700px]">
+          <table {...stylex.props(s.table)}>
             <thead>
-              <tr style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-elevated)' }}>
-                {['Producto', 'Categoría', 'Precio', 'Stock', 'Estado', 'Acciones'].map(h => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    {h}
-                  </th>
-                ))}
+              <tr>
+                <th {...stylex.props(s.th)}>Producto</th>
+                <th {...stylex.props(s.th)}>Categoría</th>
+                <th {...stylex.props(s.th)}>Precio</th>
+                <th {...stylex.props(s.th)}>Stock</th>
+                <th {...stylex.props(s.th)}>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                <tr><td colSpan={6} className="text-center py-10 text-[var(--text-muted)]"><div className="animate-spin inline-block w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mb-2"></div><br/>Cargando inventario...</td></tr>
-              ) : filtrados.length === 0 ? (
-                <tr><td colSpan={6} className="text-center py-10 text-[var(--text-muted)]">No hay productos que coincidan.</td></tr>
-              ) : filtrados.map((p, i) => {
-                const isEditing = editingId === p.id;
-                return (
-                  <tr key={p.id}
-                    style={{ borderBottom: i < filtrados.length - 1 ? '1px solid var(--border)' : 'none' }}
-                    className="hover:bg-[var(--bg-elevated)] transition-colors">
-                    {/* Producto */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {p.imagen_url ? (
-                           <img src={p.imagen_url} alt={p.nombre} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
-                        ) : (
-                           <div className="w-10 h-10 rounded-lg bg-[var(--bg-elevated)] flex items-center justify-center border border-[var(--border)]"><ImageIcon size={14} className="opacity-30"/></div>
-                        )}
-                        <div>
-                          <p className="font-semibold text-white">{p.nombre}</p>
-                          <p className="text-xs text-[var(--text-muted)] line-clamp-1 max-w-[200px]">{p.descripcion}</p>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Categoría */}
-                    <td className="px-4 py-3 text-[var(--text-secondary)] text-xs font-medium">{p.categoria}</td>
-
-                    {/* Precio */}
-                    <td className="px-4 py-3">
-                      {isEditing ? (
-                        <input id={`edit-precio-${p.id}`} type="number" step="0.01" value={editData.precio}
-                          onChange={e => setEditData(d => ({ ...d, precio: parseFloat(e.target.value) }))}
-                          className="input text-xs py-1.5" style={{ width: 80 }} />
-                      ) : (
-                        <span className="font-bold text-white">${p.precio.toFixed(2)}</span>
-                      )}
-                    </td>
-
-                    {/* Stock */}
-                    <td className="px-4 py-3">
-                      {isEditing ? (
-                        <input id={`edit-stock-${p.id}`} type="number" value={editData.stock}
-                          onChange={e => setEditData(d => ({ ...d, stock: parseInt(e.target.value) }))}
-                          className="input text-xs py-1.5" style={{ width: 70 }} />
-                      ) : (
-                        <span className={`badge ${p.stock === 0 ? 'badge-red' : p.stock <= 5 ? 'badge-amber' : 'badge-green'}`}>
-                          {p.stock} ud{p.stock !== 1 && 's'}
-                        </span>
-                      )}
-                    </td>
-
-                    {/* Estado */}
-                    <td className="px-4 py-3">
-                      <button id={`toggle-activo-${p.id}`} onClick={() => toggleActivo(p)}
-                        className={`badge cursor-pointer hover:opacity-80 transition-opacity ${p.activo ? 'badge-green' : 'badge-red'}`}>
-                        {p.activo ? 'Público' : 'Oculto'}
-                      </button>
-                    </td>
-
-                    {/* Acciones */}
-                    <td className="px-4 py-3">
-                      {isEditing ? (
-                        <div className="flex gap-2">
-                          <button id={`save-${p.id}`} onClick={() => saveEditInline(p.id)}
-                            className="w-8 h-8 rounded-lg bg-green-500/10 hover:bg-green-500/20 flex items-center justify-center transition-colors border border-green-500/30">
-                            <Check size={14} className="text-green-400" />
-                          </button>
-                          <button onClick={cancelEdit}
-                            className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-overlay)] flex items-center justify-center transition-colors border border-[var(--border)]">
-                            <X size={14} className="text-[var(--text-muted)]" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex gap-2">
-                          <button id={`edit-${p.id}`} onClick={() => startEdit(p)}
-                            className="w-8 h-8 rounded-lg hover:bg-blue-500/10 flex items-center justify-center transition-colors border border-transparent hover:border-blue-500/30">
-                            <Pencil size={14} className="text-[var(--text-muted)] hover:text-blue-400" />
-                          </button>
-                          <button id={`delete-${p.id}`} onClick={() => handleDelete(p.id)}
-                            className="w-8 h-8 rounded-lg hover:bg-red-500/10 flex items-center justify-center transition-colors border border-transparent hover:border-red-500/30">
-                            <Trash2 size={14} className="text-[var(--text-muted)] hover:text-red-400" />
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+              {filtrados.map(p => (
+                <tr key={p.id}>
+                  <td {...stylex.props(s.td)}>
+                    <div style={{display:'flex', alignItems:'center', gap:'1.5rem'}}>
+                       <img src={p.imagen_url} style={{width:'60px', height:'60px', borderRadius:'1.5rem', objectFit:'cover'}} />
+                       <div>
+                          <p style={{fontWeight:800, fontSize:'1.1rem'}}>{p.nombre}</p>
+                          <p style={{fontSize:'0.8rem', color:tokens.textDim}}>{p.id.split('-')[0]}</p>
+                       </div>
+                    </div>
+                  </td>
+                  <td {...stylex.props(s.td)} style={{fontWeight:700, color:tokens.textDim}}>{p.categoria}</td>
+                  <td {...stylex.props(s.td)} style={{fontWeight:900, fontSize:'1.25rem'}}>${p.precio.toFixed(2)}</td>
+                  <td {...stylex.props(s.td)}>
+                    <span style={{padding:'0.5rem 1.5rem', borderRadius:'1rem', background: p.stock <= 5 ? 'rgba(255,90,31,0.1)' : 'rgba(16,185,129,0.1)', color: p.stock <= 5 ? tokens.accent : tokens.success, fontWeight:900, fontSize:'0.8rem'}}>
+                       {p.stock} ud
+                    </span>
+                  </td>
+                  <td {...stylex.props(s.td)}>
+                    <div style={{display:'flex', gap:'1rem'}}>
+                       <button style={{padding:'0.75rem', borderRadius:'1rem', background:'var(--vl-border)', border:'none', cursor:'pointer'}}><Pencil size={18} color="white" /></button>
+                       <button style={{padding:'0.75rem', borderRadius:'1rem', background:'var(--vl-border)', border:'none', cursor:'pointer'}}><Trash2 size={18} color={tokens.accent} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-          </div>
-        </div>
+        </section>
       </main>
-
-      {/* Mobile Bottom Navbar */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[var(--bg-elevated)] border-t border-[var(--border)] flex items-center justify-around py-3 px-2 z-40 pb-safe">
-        <Link href="/" className="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-white transition-colors">
-          <ArrowLeft size={20} /> <span className="text-[10px] font-bold">Inicio</span>
-        </Link>
-        <Link href="/dashboard" className="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-white transition-colors">
-          <BarChart3 size={20} /> <span className="text-[10px] font-bold">Resumen</span>
-        </Link>
-        <Link href="/dashboard/inventario" className="flex flex-col items-center gap-1 text-orange-500">
-          <Package size={20} /> <span className="text-[10px] font-bold text-white">Inventario</span>
-        </Link>
-        <Link href="/pos" className="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-white transition-colors">
-          <Zap size={20} /> <span className="text-[10px] font-bold">POS</span>
-        </Link>
-      </nav>
-
-      {/* Modal Nuevo Producto */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade">
-           <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-6 w-full max-w-lg shadow-2xl relative max-h-[90vh] overflow-y-auto">
-              <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 p-2 rounded-full hover:bg-[var(--bg-elevated)] text-[var(--text-muted)] transition-colors">
-                <X size={16} />
-              </button>
-              <h2 className="text-xl font-bold text-white mb-6">Nuevo Producto</h2>
-
-              <div className="space-y-4">
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
-                      <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase mb-1">Nombre *</label>
-                      <input className="input w-full" value={newProd.nombre} onChange={e => setNewProd({...newProd, nombre: e.target.value})} placeholder="Ej. Camiseta Algodón" />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase mb-1">Precio * ($)</label>
-                      <input type="number" step="0.01" className="input w-full" value={newProd.precio} onChange={e => setNewProd({...newProd, precio: parseFloat(e.target.value)})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase mb-1">Stock Inicial</label>
-                      <input type="number" className="input w-full" value={newProd.stock} onChange={e => setNewProd({...newProd, stock: parseInt(e.target.value)})} />
-                    </div>
-                    <div className="col-span-2">
-                       <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase mb-1">Categoría</label>
-                       <input className="input w-full" value={newProd.categoria} onChange={e => setNewProd({...newProd, categoria: e.target.value})} placeholder="Ej. Ropa, Electrónica..." />
-                    </div>
-                    <div className="col-span-2">
-                       <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase mb-1">URL Imagen (Opcional)</label>
-                       <input className="input w-full" value={newProd.imagen_url} onChange={e => setNewProd({...newProd, imagen_url: e.target.value})} placeholder="https://..." />
-                    </div>
-                    <div className="col-span-2">
-                       <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase mb-1">Descripción corta</label>
-                       <textarea className="input w-full" rows={2} value={newProd.descripcion} onChange={e => setNewProd({...newProd, descripcion: e.target.value})} />
-                    </div>
-                 </div>
-
-                 <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-[var(--border)]">
-                    <button onClick={() => setIsModalOpen(false)} className="btn-ghost px-4 py-2 text-sm font-bold">Cancelar</button>
-                    <button onClick={handleCreate} disabled={savingEntity} className="btn-primary shadow-lg shadow-orange-500/20 px-6 py-2 text-sm font-bold flex items-center gap-2 disabled:opacity-50">
-                       {savingEntity && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-                       Guardar Producto
-                    </button>
-                 </div>
-              </div>
-           </div>
-        </div>
-      )}
-
-      {/* Mobile Bottom Navbar */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[var(--bg-elevated)] border-t border-[var(--border)] flex items-center justify-around py-3 px-2 z-40 pb-safe">
-        <Link href="/" className="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-white transition-colors">
-          <ArrowLeft size={20} /> <span className="text-[10px] font-bold">Inicio</span>
-        </Link>
-        <Link href="/dashboard" className="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-white transition-colors">
-          <BarChart3 size={20} /> <span className="text-[10px] font-bold">Resumen</span>
-        </Link>
-        <Link href="/dashboard/inventario" className="flex flex-col items-center gap-1 text-orange-500">
-          <Package size={20} /> <span className="text-[10px] font-bold text-white">Inventario</span>
-        </Link>
-        <Link href="/pos" className="flex flex-col items-center gap-1 text-[var(--text-muted)] hover:text-white transition-colors">
-          <Zap size={20} /> <span className="text-[10px] font-bold">POS</span>
-        </Link>
-      </nav>
-
     </div>
   );
 }

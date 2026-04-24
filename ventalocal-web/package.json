@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@stylexjs/nextjs-plugin": "^0.11.1",
+    "@stylexjs/stylex": "^0.18.3",
     "@supabase/supabase-js": "^2.104.0",
     "lucide-react": "^1.8.0",
     "next": "16.2.3",

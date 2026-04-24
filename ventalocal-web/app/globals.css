@@ -1,332 +1,201 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-/* ── Design Tokens ────────────────────────────────────────── */
+/* ── VentaLocal Obsidian Design System ── */
 :root {
-  /* Backgrounds — Midnight slate (moderno y espacioso), sin tintes marrones */
-  --bg-base:    #09090b; /* Muy oscuro, profundo */
-  --bg-surface: #121217; /* Ligeramente elevado */
-  --bg-elevated:#18181b; /* Más iluminado */
-  --bg-overlay: #27272a; /* Para modales y barras */
+  /* Obsidian Palette */
+  --vl-black: #000000;
+  --vl-deep: #050505;
+  --vl-surface: #0a0a0a;
+  --vl-elevated: #111111;
+  --vl-border: rgba(255, 255, 255, 0.05);
+  --vl-border-hover: rgba(255, 255, 255, 0.12);
+  
+  /* Accents */
+  --vl-accent: #ff5a1f;
+  --vl-accent-glow: rgba(255, 90, 31, 0.2);
+  --vl-success: #10b981;
+  --vl-warning: #f59e0b;
+  --vl-error: #ef4444;
+  
+  /* Text */
+  --vl-text-main: #ffffff;
+  --vl-text-dim: #888888;
+  --vl-text-muted: #444444;
 
-  /* Acento principal — naranja encendido */
-  --accent:       #ff5a1f;
-  --accent-light: #ff8c5a;
-  --accent-dark:  #cc3e0a;
-  --accent-glow:  rgba(255, 90, 31, 0.28);
-
-  /* Dorado — complementario cálido */
-  --gold:      #f5a623;
-  --gold-dim:  rgba(245, 166, 35, 0.15);
-
-  /* Verde esmeralda — para éxito y acción positiva */
-  --green:     #16c172;
-  --green-dim: rgba(22, 193, 114, 0.14);
-
-  /* Rojo — para errores y cancelaciones */
-  --red:       #ff3b3b;
-  --red-dim:   rgba(255, 59, 59, 0.14);
-
-  /* Azul — para info/online */
-  --blue:      #3b9eff;
-  --blue-dim:  rgba(59, 158, 255, 0.14);
-
-  /* Texto */
-  --text-primary:   #faf5ec;
-  --text-secondary: #b0a892;
-  --text-muted:     #6b6045;
-
-  /* Bordes y Glassmorphism */
-  --border:        rgba(255, 255, 255, 0.06); /* Líneas sutíles en blanco no amarillo */
-  --border-accent: rgba(255, 90, 31, 0.4);
-  --glass-shadow:  0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --glass-bg:      rgba(15, 15, 18, 0.6);
-
-  /* Espaciado — escala ampliada para lujo y aire */
-  --space-1: 0.5rem;    /* 8px */
-  --space-2: 1rem;      /* 16px */
-  --space-3: 1.5rem;    /* 24px */
-  --space-4: 2.5rem;    /* 40px */
-  --space-5: 3.5rem;    /* 56px */
-  --space-6: 4.5rem;    /* 72px */
-  --space-8: 6rem;      /* 96px */
-  --space-10: 8rem;     /* 128px */
-
-  /* Radios */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  /* Spacing (Massive Scale) */
+  --vl-gap-sm: 1rem;
+  --vl-gap-md: 2.5rem;
+  --vl-gap-lg: 5rem;
+  --vl-gap-xl: 8rem;
+  
+  --vl-p-page: 6rem;
+  --vl-p-card: 4rem;
 }
 
-
-/* ── Base ─────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; background-color: #0c0906; }
+/* ── Base ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--bg-base) !important;
-  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--vl-black);
+  color: var(--vl-text-main);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* ── Layout Components ── */
+.vl-layout {
+  display: flex;
   min-height: 100vh;
-  line-height: 1.6;          /* base line-height más generoso */
-  letter-spacing: -0.005em;  /* tracking sutil para todo */
+  background: var(--vl-black);
 }
 
-/* ── Tipografía base ───────────────────────────────────── */
-h1, h2, h3, h4 {
-  letter-spacing: -0.03em;   /* headings más compactos se leen mejor */
-  line-height: 1.2;
-}
-
-h1 { letter-spacing: -0.04em; line-height: 1.08; }
-
-p {
-  line-height: 1.75;          /* párrafos muy legibles */
-}
-
-/* ── Scrollbar ────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-surface); }
-::-webkit-scrollbar-thumb { background: var(--bg-overlay); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-/* ── Glass Card ───────────────────────────────────────────── */
-/* Base de Glassmorphism elegante para menús e items de POS/Catálogo */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-
-.glass-light {
-  background: rgba(37, 37, 53, 0.4);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-}
-
-/* ── Gradients ────────────────────────────────────────────── */
-.gradient-text {
-  background: linear-gradient(135deg, #ff8c5a 0%, #ff5a1f 50%, #cc3e0a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-hero {
-  background: radial-gradient(ellipse at 60% 0%, rgba(255,90,31,0.22) 0%, transparent 60%),
-              radial-gradient(ellipse at 10% 80%, rgba(245,166,35,0.10) 0%, transparent 50%),
-              var(--bg-base);
-}
-
-/* ── Buttons ──────────────────────────────────────────────── */
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-  color: white;
-  padding: 0.625rem 1.5rem;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  white-space: nowrap;
-}
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px var(--accent-glow);
-}
-.btn-primary:active { transform: translateY(0); }
-
-.btn-secondary {
-  background: transparent;
-  color: var(--text-primary);
-  padding: 0.625rem 1.5rem;
-  border-radius: var(--radius-md);
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.btn-secondary:hover {
-  border-color: var(--accent);
-  color: var(--accent-light);
-  background: var(--accent-glow);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-sm);
-  font-weight: 500;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.btn-ghost:hover {
-  color: var(--text-primary);
-  background: var(--bg-elevated);
-}
-
-/* ── Badge ────────────────────────────────────────────────── */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-.badge-green  { background: var(--green-dim);  color: var(--green); }
-.badge-amber  { background: var(--gold-dim);   color: var(--gold); }
-.badge-red    { background: var(--red-dim);    color: var(--red); }
-.badge-purple { background: var(--accent-glow); color: var(--accent-light); }
-.badge-blue   { background: var(--blue-dim);   color: var(--blue); }
-.badge-orange { background: var(--accent-glow); color: var(--accent-light); }
-
-/* ── Input ────────────────────────────────────────────────── */
-.input {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  padding: 0.6rem 0.875rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s;
-  width: 100%;
-}
-.input:focus { border-color: var(--accent); }
-.input::placeholder { color: var(--text-muted); }
-
-/* ── Card ─────────────────────────────────────────────────── */
-.card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 1.5rem; /* Más curvilíneo */
-  padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* Sombra elegante */
-}
-
-/* ── Sidebar ──────────────────────────────────────────────── */
-.sidebar {
-  width: 240px;
-  min-height: 100vh;
-  background: var(--bg-surface);
-  border-right: 1px solid var(--border);
+.vl-sidebar {
+  width: 320px;
+  background: var(--vl-deep);
+  border-right: 1px solid var(--vl-border);
+  padding: 4rem 2rem;
   display: flex;
   flex-direction: column;
-  padding: var(--space-6) var(--space-4);  /* 24px vertical, 16px horizontal */
-  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
 }
 
-@media (max-width: 767px) {
-  .sidebar {
-    display: none !important;
-  }
-}
-
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.875rem;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.15s;
-  cursor: pointer;
-  border: none;
-  background: none;
+.vl-main {
+  flex: 1;
+  padding: var(--vl-p-page);
+  max-width: 1800px;
+  margin: 0 auto;
   width: 100%;
 }
-.sidebar-link:hover { background: var(--bg-elevated); color: var(--text-primary); }
-.sidebar-link.active {
-  background: var(--accent-glow);
-  color: var(--accent-light);
-  border: 1px solid var(--border-accent);
-}
 
-/* ── Product Card ─────────────────────────────────────────── */
-.product-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 1.5rem; /* Más redondo */
+/* ── Obsidian Cards ── */
+.vl-card {
+  background: var(--vl-surface);
+  border: 1px solid var(--vl-border);
+  border-radius: 4rem;
+  padding: var(--vl-p-card);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-.product-card:hover {
+.vl-card:hover {
+  border-color: var(--vl-border-hover);
+  background: var(--vl-elevated);
   transform: translateY(-4px);
-  box-shadow: var(--glass-shadow);
-  border-color: rgba(255, 255, 255, 0.12);
 }
 
-/* ── Metric Card ──────────────────────────────────────────── */
-.metric-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);   /* igual que .card */
+/* ── Metrics ── */
+.vl-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--vl-gap-md);
+  margin-bottom: var(--vl-gap-lg);
+}
+
+.vl-metric-item {
+  padding: 3rem;
+  border-radius: 3rem;
+  background: var(--vl-deep);
+  border: 1px solid var(--vl-border);
+}
+
+.vl-metric-value {
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -3px;
+  margin-bottom: 0.5rem;
+}
+
+.vl-metric-label {
+  color: var(--vl-text-dim);
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+}
+
+/* ── Typography ── */
+.vl-title {
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: -4px;
+  line-height: 0.9;
+  margin-bottom: 1rem;
+}
+
+.vl-subtitle {
+  font-size: 1.25rem;
+  color: var(--vl-text-dim);
+  font-weight: 500;
+  margin-bottom: 4rem;
+}
+
+/* ── Buttons ── */
+.vl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 3rem;
+  border-radius: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  text-decoration: none;
+}
+
+.vl-btn-primary {
+  background: var(--vl-accent);
+  color: white;
+  box-shadow: 0 20px 40px var(--vl-accent-glow);
+}
+
+.vl-btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 25px 50px var(--vl-accent-glow);
+}
+
+/* ── Navigation ── */
+.vl-nav-link {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-3);       /* 12px entre valor / label / sub */
-  transition: border-color 0.2s;
-}
-.metric-card:hover { border-color: var(--border-accent); }
-
-/* ── Overlay ──────────────────────────────────────────────── */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(4px);
-  z-index: 40;
-  animation: fadeIn 0.2s ease;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  color: var(--vl-text-dim);
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 2rem;
+  transition: all 0.3s;
+  margin-bottom: 0.5rem;
 }
 
-/* ── Animations ───────────────────────────────────────────── */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideRight { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
-@keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(22,193,114,0.5); }
-  70% { box-shadow: 0 0 0 10px transparent; }
-  100% { box-shadow: 0 0 0 0 transparent; }
+.vl-nav-link:hover, .vl-nav-link.active {
+  color: var(--vl-text-main);
+  background: var(--vl-border);
 }
 
-.animate-fade { animation: fadeIn 0.3s ease; }
-.animate-slide-up { animation: slideUp 0.3s ease; }
-.animate-slide-right { animation: slideRight 0.3s ease; }
-.animate-pulse-ring { animation: pulse-ring 2s infinite; }
-
-/* ── Glow dot ─────────────────────────────────────────────── */
-.dot-live {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: pulse-ring 2s infinite;
-  display: inline-block;
+.vl-nav-link.active {
+  background: var(--vl-accent-glow);
+  color: var(--vl-accent);
 }
 
-/* ── Divider ──────────────────────────────────────────────── */
-.divider { height: 1px; background: var(--border); width: 100%; }
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .vl-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .vl-p-page { padding: 2rem; }
+  .vl-title { font-size: 3rem; }
+}
+
+@media (max-width: 768px) {
+  .vl-sidebar { display: none; }
+  .vl-main { padding: 2rem; }
+  .vl-card { border-radius: 2.5rem; padding: 2rem; }
+  .vl-metrics-grid { grid-template-columns: 1fr; }
+}

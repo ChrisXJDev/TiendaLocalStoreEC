@@ -1,7 +1,13 @@
+import stylexPlugin from '@stylexjs/nextjs-plugin';
 import type { NextConfig } from "next";
+import path from 'path';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Configuración estándar de Next.js
 };
 
-export default nextConfig;
+export default stylexPlugin({
+  rootDir: __dirname,
+  filename: 'stylex-bundle.css',
+  useSWC: true,
+})(nextConfig);
