@@ -158,73 +158,76 @@ export default function DashboardPage() {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-10 pb-24 md:pb-10">
+      <main className="flex-1 overflow-y-auto p-6 md:p-20 pb-32 md:pb-24">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-12 gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-24 gap-10">
           <div>
-            <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            <h1 className="text-4xl font-black text-white tracking-tighter" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
               Dashboard
             </h1>
-            <p className="text-[var(--text-secondary)] text-sm mt-2 font-medium">
+            <p className="text-[var(--text-secondary)] text-base mt-3 font-medium opacity-70">
               {new Date().toLocaleDateString('es-EC', { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
           </div>
-          <div className="flex gap-4">
-            <Link href="/pos" className="btn-primary w-full sm:w-auto justify-center px-6 py-3">
-              <Zap size={14} /> Abrir POS
+          <div className="flex gap-6">
+            <Link href="/pos" className="btn-primary w-full sm:w-auto justify-center px-10 py-5 rounded-3xl text-base shadow-2xl">
+              <Zap size={18} /> Abrir Terminal POS
             </Link>
           </div>
         </div>
 
-        {/* Metrics - More air between cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-12">
+        {/* Metrics - Massively spaced */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-16 mb-24">
           {METRICS.map(({ label, value, icon: Icon, color, sub }) => (
-            <div key={label} className="metric-card p-5 md:p-8 rounded-3xl group relative overflow-hidden border border-[var(--border)] hover:border-orange-500/30 transition-all">
-              <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full blur-3xl opacity-10" style={{ background: color }}></div>
-              <div className="flex items-center justify-between mb-4 md:mb-6 relative z-10">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shadow-inner"
+            <div key={label} className="metric-card p-8 md:p-14 rounded-[3rem] group relative overflow-hidden border border-white/5 hover:border-orange-500/20 transition-all bg-white/[0.01]">
+              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-[100px] opacity-10" style={{ background: color }}></div>
+              <div className="flex items-center justify-between mb-10 md:mb-12 relative z-10">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-3xl flex items-center justify-center shadow-2xl"
                   style={{ background: `${color}10`, border: `1px solid ${color}20` }}>
-                  <Icon size={16} className="md:w-[20px] md:h-[20px]" style={{ color }} />
+                  <Icon size={24} style={{ color }} />
                 </div>
               </div>
-              <div className="text-2xl md:text-4xl font-black text-white relative z-10 tracking-tight">{value}</div>
-              <div className="text-[10px] md:text-xs font-bold text-[var(--text-muted)] mt-1.5 relative z-10 uppercase tracking-[0.1em]">{label}</div>
+              <div className="text-3xl md:text-5xl font-black text-white relative z-10 tracking-tighter">{value}</div>
+              <div className="text-[10px] md:text-xs font-black text-[var(--text-muted)] mt-4 relative z-10 uppercase tracking-[0.3em] opacity-60">{label}</div>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-16 md:gap-24 mb-24">
           {/* Órdenes recientes */}
-          <div className="card lg:col-span-3 rounded-[2rem] flex flex-col p-6 md:p-10 bg-[var(--bg-surface)]">
-            <div className="flex items-center justify-between mb-8 md:mb-10">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center">
-                  <ShoppingCart size={20} className="text-orange-500" />
+          <div className="card lg:col-span-3 rounded-[3.5rem] flex flex-col p-8 md:p-20 bg-white/[0.01]">
+            <div className="flex items-center justify-between mb-16 md:mb-20">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 rounded-3xl bg-orange-500/10 flex items-center justify-center shadow-xl">
+                  <ShoppingCart size={32} className="text-orange-500" />
                 </div>
-                <h2 className="font-bold text-lg md:text-xl text-white">Órdenes recientes</h2>
+                <div>
+                  <h2 className="font-black text-2xl md:text-3xl text-white tracking-tight">Órdenes recientes</h2>
+                  <p className="text-sm text-[var(--text-muted)] mt-1 font-bold uppercase tracking-widest">Últimos movimientos</p>
+                </div>
               </div>
-              <Link href="/pos" className="text-[10px] md:text-xs text-orange-400 font-black uppercase tracking-[0.15em] flex items-center gap-2 hover:text-orange-300 transition-colors">
-                GESTIONAR EN POS <ChevronRight size={12} />
+              <Link href="/pos" className="text-[10px] md:text-xs text-orange-400 font-black uppercase tracking-[0.3em] flex items-center gap-4 hover:text-orange-300 transition-all">
+                IR AL TERMINAL <ChevronRight size={16} />
               </Link>
             </div>
             
             {ordenes.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 opacity-50 border-2 border-dashed border-white/5 rounded-[1.5rem]">
-                <ShoppingCart size={48} className="mb-4 text-gray-500" />
-                <p className="text-sm font-bold tracking-[0.2em] uppercase text-gray-400">Sin movimientos</p>
+              <div className="flex flex-col items-center justify-center py-32 opacity-30 border-2 border-dashed border-white/10 rounded-[2.5rem]">
+                <ShoppingCart size={64} className="mb-6 text-gray-500" />
+                <p className="text-base font-black tracking-[0.4em] uppercase text-gray-500">Vacío</p>
               </div>
             ) : (
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-10">
                 {/* Desktop View */}
                 <div className="hidden md:flex flex-col divide-y w-full overflow-x-auto" style={{ borderColor: 'var(--border)' }}>
-                  <div className="min-w-[600px] -mx-6 px-6">
+                  <div className="min-w-[600px] -mx-10 px-10">
                     {ordenes.map(orden => (
                       <OrdenRow key={orden.id} orden={orden} onUpdate={updateEstado} />
                     ))}
                   </div>
                 </div>
                 {/* Mobile View */}
-                <div className="md:hidden flex flex-col gap-4">
+                <div className="md:hidden flex flex-col gap-8">
                   {ordenes.slice(0, 5).map(orden => (
                     <OrdenCard key={orden.id} orden={orden} onUpdate={updateEstado} />
                   ))}
@@ -233,22 +236,22 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="card lg:col-span-1 p-6 md:p-8 rounded-[2rem] flex flex-col">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="font-bold text-lg text-white">Stock bajo</h2>
-              <Link href="/dashboard/inventario" className="w-8 h-8 rounded-full bg-[var(--bg-elevated)] flex items-center justify-center hover:bg-orange-500/20 transition-colors">
-                <ChevronRight size={16} className="text-orange-400" />
+          <div className="card lg:col-span-1 p-8 md:p-12 rounded-[3.5rem] flex flex-col bg-white/[0.01]">
+            <div className="flex items-center justify-between mb-12">
+              <h2 className="font-black text-xl text-white tracking-tight">Alerta Stock</h2>
+              <Link href="/dashboard/inventario" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-orange-500/20 transition-all shadow-xl">
+                <ChevronRight size={20} className="text-orange-400" />
               </Link>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-8">
               {stockBajo.slice(0, 4).map(p => (
-                <div key={p.id} className="flex items-center gap-4 p-3 md:p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] group hover:border-orange-500/30 transition-all">
-                  <img src={p.imagen_url} alt={p.nombre} className="w-12 h-12 rounded-xl bg-black/20 object-cover flex-shrink-0 shadow-lg" />
+                <div key={p.id} className="flex items-center gap-6 p-4 md:p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 group hover:border-orange-500/30 transition-all shadow-lg">
+                  <img src={p.imagen_url} alt={p.nombre} className="w-16 h-16 rounded-2xl bg-black/40 object-cover flex-shrink-0 shadow-2xl border border-white/5" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs md:text-sm font-bold truncate text-white">{p.nombre}</p>
-                    <p className="text-[10px] md:text-xs text-[var(--text-muted)] font-medium mt-0.5">${Number(p.precio).toFixed(2)}</p>
+                    <p className="text-sm md:text-base font-black truncate text-white tracking-tight">{p.nombre}</p>
+                    <p className="text-xs text-[var(--text-muted)] font-bold mt-1.5 opacity-60">${Number(p.precio).toFixed(2)}</p>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black ${p.stock === 0 ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                  <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black shadow-inner ${p.stock === 0 ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>
                     {p.stock}
                   </span>
                 </div>
@@ -257,73 +260,81 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Analytics Section (Inteligencia de Negocio) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Analytics Section - Massive vertical space */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-32 mb-32">
           
           {/* Top Productos Más Vendidos */}
-          <div className="card p-6 md:p-10 rounded-[2rem] flex flex-col">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center">
-                <Trophy size={20} className="text-yellow-500" />
+          <div className="card p-8 md:p-20 rounded-[3.5rem] flex flex-col bg-white/[0.01]">
+            <div className="flex items-center gap-8 mb-16">
+              <div className="w-16 h-16 rounded-[2rem] bg-yellow-500/10 flex items-center justify-center shadow-xl">
+                <Trophy size={32} className="text-yellow-500" />
               </div>
-              <h2 className="font-bold text-lg md:text-xl text-white">Top Vendidos</h2>
+              <div>
+                <h2 className="font-black text-2xl md:text-3xl text-white tracking-tight">Top Vendidos</h2>
+                <p className="text-sm text-[var(--text-muted)] mt-1 font-bold uppercase tracking-widest opacity-60">Líderes de mercado</p>
+              </div>
             </div>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-10">
               {topVendidos.length > 0 ? topVendidos.map((p, ix) => (
-                <div key={p.id} className="group relative flex items-center gap-5 p-5 rounded-2xl border transition-all hover:bg-[var(--bg-elevated)]" style={{ borderColor: 'var(--border)' }}>
-                  <div className="absolute -left-2 -top-2 w-7 h-7 rounded-full bg-yellow-500 text-black font-black text-xs flex items-center justify-center shadow-lg border-2 border-[var(--bg-base)] z-20">
+                <div key={p.id} className="group relative flex items-center gap-8 p-6 md:p-8 rounded-[2.5rem] border transition-all hover:bg-white/[0.03] hover:shadow-2xl" style={{ borderColor: 'var(--border)' }}>
+                  <div className="absolute -left-4 -top-4 w-10 h-10 rounded-full bg-yellow-500 text-black font-black text-sm flex items-center justify-center shadow-2xl border-4 border-[var(--bg-base)] z-20">
                     {ix + 1}
                   </div>
-                  <img src={p.imagen_url} alt={p.nombre} className="w-16 h-16 rounded-xl object-cover shadow-md" />
+                  <img src={p.imagen_url} alt={p.nombre} className="w-20 h-20 md:w-24 md:h-24 rounded-[2rem] object-cover shadow-2xl border border-white/10" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-base font-bold truncate text-white">{p.nombre}</p>
-                    <p className="text-xs font-medium text-[var(--text-muted)] mt-1.5 uppercase tracking-wider">{p.categoria}</p>
+                    <p className="text-lg md:text-xl font-black truncate text-white tracking-tight">{p.nombre}</p>
+                    <p className="text-xs font-bold text-[var(--text-muted)] mt-2 uppercase tracking-[0.2em] opacity-50">{p.categoria}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-black text-white">{p.cantVendida} <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase">uds</span></p>
+                    <p className="text-2xl md:text-4xl font-black text-white tracking-tighter">{p.cantVendida} <span className="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest ml-1">uds</span></p>
                   </div>
                 </div>
               )) : (
-                <p className="text-sm text-[var(--text-muted)] text-center py-6">No hay datos de ventas suficientes.</p>
+                <p className="text-sm text-[var(--text-muted)] text-center py-20 font-bold uppercase tracking-widest">Sin datos de ventas</p>
               )}
             </div>
           </div>
 
           {/* Producto en Alza / Trending */}
-          <div className="card bg-gradient-to-br from-[var(--bg-surface)] to-[var(--bg-elevated)] border border-[var(--border)] relative overflow-hidden group">
-            <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-orange-500/10 blur-3xl rounded-full group-hover:bg-orange-500/20 transition-colors"></div>
+          <div className="card bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 relative overflow-hidden group p-8 md:p-20 rounded-[3.5rem]">
+            <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-orange-500/10 blur-[120px] rounded-full group-hover:bg-orange-500/20 transition-all duration-1000"></div>
             
-            <div className="flex items-center gap-4 mb-10 relative z-10">
-              <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center">
-                <Flame size={20} className="text-orange-500 animate-pulse" />
+            <div className="flex items-center gap-8 mb-20 relative z-10">
+              <div className="w-16 h-16 rounded-[2rem] bg-orange-500/10 flex items-center justify-center shadow-xl">
+                <Flame size={32} className="text-orange-500 animate-pulse" />
               </div>
-              <h2 className="font-bold text-lg md:text-xl text-white">Producto Estrella</h2>
+              <div>
+                <h2 className="font-black text-2xl md:text-3xl text-white tracking-tight">Producto Estrella</h2>
+                <p className="text-sm text-[var(--text-muted)] mt-1 font-bold uppercase tracking-widest opacity-60">Tendencia actual</p>
+              </div>
             </div>
             
             {trending ? (
-              <div className="relative z-10 flex flex-col items-center text-center mt-6">
-                <div className="relative mb-10">
-                  <img src={trending.imagen_url} alt={trending.nombre} className="w-40 h-40 rounded-[2.5rem] object-cover shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10" />
-                  <div className="absolute -top-3 -right-3 px-4 py-1.5 bg-green-500 text-black shadow-xl rounded-full text-[10px] font-black whitespace-nowrap uppercase tracking-widest border-2 border-[var(--bg-surface)]">
+              <div className="relative z-10 flex flex-col items-center text-center mt-10">
+                <div className="relative mb-16">
+                  <img src={trending.imagen_url} alt={trending.nombre} className="w-56 h-56 md:w-64 md:h-64 rounded-[4rem] object-cover shadow-[0_40px_80px_rgba(0,0,0,0.6)] border border-white/10 group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute -top-4 -right-4 px-6 py-2.5 bg-green-500 text-black shadow-2xl rounded-2xl text-xs font-black whitespace-nowrap uppercase tracking-[0.3em] border-4 border-[var(--bg-base)]">
                     Trending
                   </div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-black text-white mb-2">{trending.nombre}</h3>
-                <p className="text-[var(--text-secondary)] text-sm mb-10 px-6 font-medium leading-relaxed">{trending.descripcion?.slice(0, 80)}...</p>
+                <h3 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tighter">{trending.nombre}</h3>
+                <p className="text-[var(--text-secondary)] text-base md:text-lg mb-16 px-10 font-medium leading-relaxed opacity-70">{trending.descripcion?.slice(0, 100)}...</p>
                 
-                <div className="grid grid-cols-2 gap-6 w-full px-4">
-                  <div className="p-5 rounded-3xl bg-white/[0.03] border border-white/5 backdrop-blur-sm">
-                    <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">Stock Actual</p>
-                    <p className={`text-xl font-black ${trending.stock <= 5 ? 'text-red-400' : 'text-white'}`}>{trending.stock} <span className="text-xs opacity-40">uds</span></p>
+                <div className="grid grid-cols-2 gap-10 w-full">
+                  <div className="p-8 rounded-[2.5rem] bg-white/[0.03] border border-white/5 backdrop-blur-md shadow-2xl">
+                    <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-4 opacity-50">Stock Disponible</p>
+                    <p className={`text-2xl md:text-4xl font-black ${trending.stock <= 5 ? 'text-red-400' : 'text-white'} tracking-tighter`}>{trending.stock} <span className="text-sm opacity-30">uds</span></p>
                   </div>
-                  <div className="p-5 rounded-3xl bg-white/[0.03] border border-white/5 backdrop-blur-sm">
-                    <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">Ingresos</p>
-                    <p className="text-xl font-black text-orange-400">${trending.ingresos?.toFixed(2)}</p>
+                  <div className="p-8 rounded-[2.5rem] bg-white/[0.03] border border-white/5 backdrop-blur-md shadow-2xl">
+                    <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-4 opacity-50">Ingresos Totales</p>
+                    <p className="text-2xl md:text-4xl font-black text-orange-400 tracking-tighter">${trending.ingresos?.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-[var(--text-muted)] text-center py-10 relative z-10">Esperando más ventas para calcular el producto trend...</p>
+              <div className="py-32 flex flex-center items-center justify-center">
+                 <p className="text-sm text-[var(--text-muted)] text-center font-bold uppercase tracking-[0.3em] opacity-40">Calculando analíticas...</p>
+              </div>
             )}
           </div>
           
