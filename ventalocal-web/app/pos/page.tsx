@@ -26,7 +26,7 @@ export default function PosPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [busqueda, setBusqueda] = useState('');
   const [metodo, setMetodo] = useState<MetodoPago>('efectivo');
-  
+
   const [montoEfectivo, setMontoEfectivo] = useState('');
   const [showRecibo, setShowRecibo] = useState(false);
   const [ultimaOrden, setUltimaOrden] = useState<{ total: number; items: CartItem[]; id?: string } | null>(null);
@@ -77,7 +77,7 @@ export default function PosPage() {
 
   const cobrar = async () => {
     if (items.length === 0 || !negocio) return;
-    
+
     try {
       const dbOrden = await createOrden({
         negocio_id: negocio.id,
@@ -148,7 +148,7 @@ export default function PosPage() {
           <div className="hidden sm:block w-px h-5 mx-1" style={{ background: 'var(--border)' }} />
           <span className="font-bold text-white text-sm sm:text-base whitespace-nowrap">POS Terminal</span>
           <div className="hidden xs:flex badge badge-green ml-1 sm:ml-2 scale-90 sm:scale-100">
-             <span className="dot-live" style={{ width: 6, height: 6 }} /> <span className="hidden sm:inline">Turno activo</span>
+            <span className="dot-live" style={{ width: 6, height: 6 }} /> <span className="hidden sm:inline">Turno activo</span>
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
@@ -202,25 +202,25 @@ export default function PosPage() {
 
         {/* ── Mobile Cart Trigger (FAB) ──────────────── */}
         <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] z-40">
-           <button 
-             onClick={() => setShowMobileCart(true)} 
-             className="w-full h-14 bg-orange-500 rounded-2xl text-white shadow-[0_10px_30px_rgba(249,115,22,0.4)] flex items-center justify-between px-6 transition-transform active:scale-95">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <ShoppingBag size={22} />
-                  <span className="absolute -top-2 -right-2 w-5 h-5 bg-white text-orange-600 rounded-full text-[10px] font-black flex items-center justify-center border-2 border-orange-500">
-                    {items.reduce((s,i) => s + i.cantidad, 0)}
-                  </span>
-                </div>
-                <span className="font-black tracking-tight text-lg">Revisar Orden</span>
+          <button
+            onClick={() => setShowMobileCart(true)}
+            className="w-full h-14 bg-orange-500 rounded-2xl text-white shadow-[0_10px_30px_rgba(249,115,22,0.4)] flex items-center justify-between px-6 transition-transform active:scale-95">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <ShoppingBag size={22} />
+                <span className="absolute -top-2 -right-2 w-5 h-5 bg-white text-orange-600 rounded-full text-[10px] font-black flex items-center justify-center border-2 border-orange-500">
+                  {items.reduce((s, i) => s + i.cantidad, 0)}
+                </span>
               </div>
-              <span className="font-black text-xl">${total.toFixed(2)}</span>
-           </button>
+              <span className="font-black tracking-tight text-lg">Revisar Orden</span>
+            </div>
+            <span className="font-black text-xl">${total.toFixed(2)}</span>
+          </button>
         </div>
 
         {/* ── Panel derecho: Cobro (Drawer Móvil / Sidebar Desktop) ──────────────────── */}
         {showMobileCart && <div className="lg:hidden fixed inset-0 bg-black/70 z-40 backdrop-blur-sm transition-opacity" onClick={() => setShowMobileCart(false)} />}
-        
+
         <div className={`
           flex flex-col border-l bg-[var(--bg-surface)] border-[var(--border)]
           transition-transform duration-300 z-50 shadow-2xl lg:shadow-none
@@ -348,12 +348,12 @@ export default function PosPage() {
           <div className="overlay" onClick={() => setShowRecibo(false)} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="glass rounded-xl p-0 w-80 animate-slide-up flex flex-col shadow-2xl overflow-hidden border border-gray-700/50">
-              
+
               {/* Encabezado del ticket térmico blanco clásico */}
               <div className="bg-white text-black p-6 pb-2 text-center">
                 <div className="border-b-2 border-dashed border-gray-300 pb-4 mb-2">
                   <h3 className="text-xl font-black uppercase tracking-widest">{negocio?.nombre || 'Mi Tienda'}</h3>
-                  <p className="text-xs text-gray-500 mb-1">{negocio?.descripcion?.slice(0,30) || 'Sistema POS VentaLocal'}</p>
+                  <p className="text-xs text-gray-500 mb-1">{negocio?.descripcion?.slice(0, 30) || 'Sistema POS VentaLocal'}</p>
                   <p className="text-[10px] text-gray-400 mt-2">Ticket de Venta #{ultimaOrden.id?.split('-')[0] || '12039'}</p>
                   <p className="text-[10px] text-gray-400">Caja Principal - {new Date().toLocaleDateString()}</p>
                   <p className="text-[10px] text-gray-400">Cajero: {turno.vendedor_nombre}</p>
@@ -380,10 +380,10 @@ export default function PosPage() {
                   <span className="font-bold text-sm">TOTAL FINAL</span>
                   <span className="text-xl font-black">${ultimaOrden.total.toFixed(2)}</span>
                 </div>
-                
+
                 <p className="text-[10px] text-center text-gray-500 mb-2">¡Gracias por su compra!</p>
               </div>
-              
+
               {/* Botón de acción */}
               <div className="p-4 bg-[var(--bg-elevated)] border-t border-[var(--border)]">
                 <button onClick={() => setShowRecibo(false)} className="btn-primary w-full justify-center">

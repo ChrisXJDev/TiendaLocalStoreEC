@@ -160,59 +160,61 @@ export default function DashboardPage() {
       {/* Main */}
       <main className="flex-1 overflow-y-auto p-4 md:p-10 pb-24 md:pb-10">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-12 gap-6">
           <div>
-            <h1 className="text-2xl font-black text-white" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
               Dashboard
             </h1>
-            <p className="text-[var(--text-secondary)] text-sm mt-1">
+            <p className="text-[var(--text-secondary)] text-sm mt-2 font-medium">
               {new Date().toLocaleDateString('es-EC', { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
           </div>
-          <div className="flex gap-3">
-            <Link href="/pos" className="btn-primary w-full sm:w-auto justify-center">
+          <div className="flex gap-4">
+            <Link href="/pos" className="btn-primary w-full sm:w-auto justify-center px-6 py-3">
               <Zap size={14} /> Abrir POS
             </Link>
           </div>
         </div>
 
-        {/* Metrics - 2 columns on mobile for better space usage */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6">
+        {/* Metrics - More air between cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-12">
           {METRICS.map(({ label, value, icon: Icon, color, sub }) => (
-            <div key={label} className="metric-card p-4 md:p-6 rounded-2xl group relative overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-3xl opacity-10" style={{ background: color }}></div>
-              <div className="flex items-center justify-between mb-2 md:mb-4 relative z-10">
-                <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center"
-                  style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
-                  <Icon size={14} className="md:w-[18px] md:h-[18px]" style={{ color }} />
+            <div key={label} className="metric-card p-5 md:p-8 rounded-3xl group relative overflow-hidden border border-[var(--border)] hover:border-orange-500/30 transition-all">
+              <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full blur-3xl opacity-10" style={{ background: color }}></div>
+              <div className="flex items-center justify-between mb-4 md:mb-6 relative z-10">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shadow-inner"
+                  style={{ background: `${color}10`, border: `1px solid ${color}20` }}>
+                  <Icon size={16} className="md:w-[20px] md:h-[20px]" style={{ color }} />
                 </div>
               </div>
-              <div className="text-xl md:text-3xl font-black text-white relative z-10 tracking-tight">{value}</div>
-              <div className="text-[10px] md:text-sm font-medium text-[var(--text-secondary)] mt-0.5 relative z-10 uppercase tracking-wide">{label}</div>
+              <div className="text-2xl md:text-4xl font-black text-white relative z-10 tracking-tight">{value}</div>
+              <div className="text-[10px] md:text-xs font-bold text-[var(--text-muted)] mt-1.5 relative z-10 uppercase tracking-[0.1em]">{label}</div>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 mb-12">
           {/* Órdenes recientes */}
-          <div className="card lg:col-span-3 rounded-2xl flex flex-col p-4 md:p-6 bg-[var(--bg-surface)]">
-            <div className="flex items-center justify-between mb-4 md:mb-6">
-              <div className="flex items-center gap-2">
-                <ShoppingCart size={18} className="text-orange-500" />
-                <h2 className="font-bold text-base md:text-lg">Órdenes recientes</h2>
+          <div className="card lg:col-span-3 rounded-[2rem] flex flex-col p-6 md:p-10 bg-[var(--bg-surface)]">
+            <div className="flex items-center justify-between mb-8 md:mb-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center">
+                  <ShoppingCart size={20} className="text-orange-500" />
+                </div>
+                <h2 className="font-bold text-lg md:text-xl text-white">Órdenes recientes</h2>
               </div>
-              <Link href="/pos" className="text-[10px] md:text-xs text-orange-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                Ver POS <ChevronRight size={10} />
+              <Link href="/pos" className="text-[10px] md:text-xs text-orange-400 font-black uppercase tracking-[0.15em] flex items-center gap-2 hover:text-orange-300 transition-colors">
+                GESTIONAR EN POS <ChevronRight size={12} />
               </Link>
             </div>
             
             {ordenes.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 opacity-50 border-2 border-dashed border-white/5 rounded-xl">
-                <ShoppingCart size={40} className="mb-4 text-gray-500" />
-                <p className="text-sm font-bold tracking-widest uppercase text-gray-400">No hay órdenes recientes</p>
+              <div className="flex flex-col items-center justify-center py-20 opacity-50 border-2 border-dashed border-white/5 rounded-[1.5rem]">
+                <ShoppingCart size={48} className="mb-4 text-gray-500" />
+                <p className="text-sm font-bold tracking-[0.2em] uppercase text-gray-400">Sin movimientos</p>
               </div>
             ) : (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-5">
                 {/* Desktop View */}
                 <div className="hidden md:flex flex-col divide-y w-full overflow-x-auto" style={{ borderColor: 'var(--border)' }}>
                   <div className="min-w-[600px] -mx-6 px-6">
@@ -222,7 +224,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 {/* Mobile View */}
-                <div className="md:hidden flex flex-col gap-2">
+                <div className="md:hidden flex flex-col gap-4">
                   {ordenes.slice(0, 5).map(orden => (
                     <OrdenCard key={orden.id} orden={orden} onUpdate={updateEstado} />
                   ))}
@@ -231,22 +233,22 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="card lg:col-span-1 p-4 md:p-6 rounded-2xl flex flex-col">
-            <div className="flex items-center justify-between mb-4 md:mb-5">
-              <h2 className="font-bold text-base">Stock bajo</h2>
-              <Link href="/dashboard/inventario" className="text-[10px] text-orange-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                Ver todo <ChevronRight size={10} />
+          <div className="card lg:col-span-1 p-6 md:p-8 rounded-[2rem] flex flex-col">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="font-bold text-lg text-white">Stock bajo</h2>
+              <Link href="/dashboard/inventario" className="w-8 h-8 rounded-full bg-[var(--bg-elevated)] flex items-center justify-center hover:bg-orange-500/20 transition-colors">
+                <ChevronRight size={16} className="text-orange-400" />
               </Link>
             </div>
-            <div className="flex flex-col gap-2 md:gap-3">
+            <div className="flex flex-col gap-4">
               {stockBajo.slice(0, 4).map(p => (
-                <div key={p.id} className="flex items-center gap-3 p-2 md:p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border)]">
-                  <img src={p.imagen_url} alt={p.nombre} className="w-9 h-9 md:w-11 md:h-11 rounded-lg bg-black/20 object-cover flex-shrink-0" />
+                <div key={p.id} className="flex items-center gap-4 p-3 md:p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] group hover:border-orange-500/30 transition-all">
+                  <img src={p.imagen_url} alt={p.nombre} className="w-12 h-12 rounded-xl bg-black/20 object-cover flex-shrink-0 shadow-lg" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] md:text-xs font-bold truncate text-white">{p.nombre}</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">${Number(p.precio).toFixed(2)}</p>
+                    <p className="text-xs md:text-sm font-bold truncate text-white">{p.nombre}</p>
+                    <p className="text-[10px] md:text-xs text-[var(--text-muted)] font-medium mt-0.5">${Number(p.precio).toFixed(2)}</p>
                   </div>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-black ${p.stock === 0 ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black ${p.stock === 0 ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
                     {p.stock}
                   </span>
                 </div>
