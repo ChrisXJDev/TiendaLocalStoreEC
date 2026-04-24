@@ -261,24 +261,26 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           
           {/* Top Productos Más Vendidos */}
-          <div className="card p-6 rounded-xl flex flex-col">
-            <div className="flex items-center gap-2 mb-6">
-              <Trophy size={20} className="text-yellow-500" />
-              <h2 className="font-bold text-lg">Top Productos Más Vendidos</h2>
+          <div className="card p-6 md:p-10 rounded-[2rem] flex flex-col">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                <Trophy size={20} className="text-yellow-500" />
+              </div>
+              <h2 className="font-bold text-lg md:text-xl text-white">Top Vendidos</h2>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               {topVendidos.length > 0 ? topVendidos.map((p, ix) => (
-                <div key={p.id} className="group relative flex items-center gap-4 p-4 rounded-2xl border transition-all hover:bg-[var(--bg-elevated)]" style={{ borderColor: 'var(--border)' }}>
-                  <div className="absolute -left-2 -top-2 w-6 h-6 rounded-full bg-yellow-500 text-black font-black text-xs flex items-center justify-center shadow-lg border-2 border-[var(--bg-base)]">
+                <div key={p.id} className="group relative flex items-center gap-5 p-5 rounded-2xl border transition-all hover:bg-[var(--bg-elevated)]" style={{ borderColor: 'var(--border)' }}>
+                  <div className="absolute -left-2 -top-2 w-7 h-7 rounded-full bg-yellow-500 text-black font-black text-xs flex items-center justify-center shadow-lg border-2 border-[var(--bg-base)] z-20">
                     {ix + 1}
                   </div>
-                  <img src={p.imagen_url} alt={p.nombre} className="w-14 h-14 rounded-xl object-cover" />
+                  <img src={p.imagen_url} alt={p.nombre} className="w-16 h-16 rounded-xl object-cover shadow-md" />
                   <div className="flex-1 min-w-0">
                     <p className="text-base font-bold truncate text-white">{p.nombre}</p>
-                    <p className="text-xs font-medium text-[var(--text-muted)] mt-1">{p.categoria}</p>
+                    <p className="text-xs font-medium text-[var(--text-muted)] mt-1.5 uppercase tracking-wider">{p.categoria}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-black text-white">{p.cantVendida} <span className="text-xs font-medium text-[var(--text-muted)]">uds</span></p>
+                    <p className="text-xl font-black text-white">{p.cantVendida} <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase">uds</span></p>
                   </div>
                 </div>
               )) : (
@@ -291,30 +293,32 @@ export default function DashboardPage() {
           <div className="card bg-gradient-to-br from-[var(--bg-surface)] to-[var(--bg-elevated)] border border-[var(--border)] relative overflow-hidden group">
             <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-orange-500/10 blur-3xl rounded-full group-hover:bg-orange-500/20 transition-colors"></div>
             
-            <div className="flex items-center gap-2 mb-6 relative z-10">
-              <Flame size={20} className="text-orange-500 animate-pulse" />
-              <h2 className="font-bold text-lg">Producto en Alza (Mayor Ingreso)</h2>
+            <div className="flex items-center gap-4 mb-10 relative z-10">
+              <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center">
+                <Flame size={20} className="text-orange-500 animate-pulse" />
+              </div>
+              <h2 className="font-bold text-lg md:text-xl text-white">Producto Estrella</h2>
             </div>
             
             {trending ? (
-              <div className="relative z-10 flex flex-col items-center text-center mt-4">
-                <div className="relative">
-                  <img src={trending.imagen_url} alt={trending.nombre} className="w-32 h-32 rounded-3xl object-cover shadow-2xl mb-4 border border-[var(--border)]" />
-                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full text-xs font-bold whitespace-nowrap backdrop-blur-md">
+              <div className="relative z-10 flex flex-col items-center text-center mt-6">
+                <div className="relative mb-10">
+                  <img src={trending.imagen_url} alt={trending.nombre} className="w-40 h-40 rounded-[2.5rem] object-cover shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10" />
+                  <div className="absolute -top-3 -right-3 px-4 py-1.5 bg-green-500 text-black shadow-xl rounded-full text-[10px] font-black whitespace-nowrap uppercase tracking-widest border-2 border-[var(--bg-surface)]">
                     Trending
                   </div>
                 </div>
-                <h3 className="text-xl font-black text-white mt-4">{trending.nombre}</h3>
-                <p className="text-[var(--text-secondary)] text-sm mb-6">{trending.descripcion?.slice(0, 80)}...</p>
+                <h3 className="text-2xl md:text-3xl font-black text-white mb-2">{trending.nombre}</h3>
+                <p className="text-[var(--text-secondary)] text-sm mb-10 px-6 font-medium leading-relaxed">{trending.descripcion?.slice(0, 80)}...</p>
                 
-                <div className="grid grid-cols-2 gap-4 w-full px-4">
-                  <div className="p-3 rounded-2xl bg-[var(--bg-base)] border border-[var(--border)]">
-                    <p className="text-xs text-[var(--text-muted)] mb-1">Stock Actual</p>
-                    <p className={`text-lg font-black ${trending.stock <= 5 ? 'text-red-400' : 'text-white'}`}>{trending.stock} uds</p>
+                <div className="grid grid-cols-2 gap-6 w-full px-4">
+                  <div className="p-5 rounded-3xl bg-white/[0.03] border border-white/5 backdrop-blur-sm">
+                    <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">Stock Actual</p>
+                    <p className={`text-xl font-black ${trending.stock <= 5 ? 'text-red-400' : 'text-white'}`}>{trending.stock} <span className="text-xs opacity-40">uds</span></p>
                   </div>
-                  <div className="p-3 rounded-2xl bg-[var(--bg-base)] border border-[var(--border)]">
-                    <p className="text-xs text-[var(--text-muted)] mb-1">Ingresos</p>
-                    <p className="text-lg font-black text-orange-400">${trending.ingresos?.toFixed(2)}</p>
+                  <div className="p-5 rounded-3xl bg-white/[0.03] border border-white/5 backdrop-blur-sm">
+                    <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">Ingresos</p>
+                    <p className="text-xl font-black text-orange-400">${trending.ingresos?.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
