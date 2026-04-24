@@ -47,7 +47,7 @@ export async function updateProducto(id: string, updates: Partial<Producto>): Pr
 export async function createProducto(data: Partial<Producto>): Promise<Producto> {
   const { data: newProducto, error } = await supabase
     .from('productos')
-    .insert([data])
+    .insert([{ ...data, activo: data.activo ?? true }])
     .select()
     .single();
     
